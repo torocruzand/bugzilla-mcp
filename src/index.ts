@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
@@ -10,8 +11,6 @@ dotenv.config();
 
 const BUGZILLA_URL = process.env.BUGZILLA_URL || '';
 const BUGZILLA_API_KEY = process.env.BUGZILLA_API_KEY;
-const BUGZILLA_LOGIN = process.env.BUGZILLA_LOGIN;
-const BUGZILLA_PASSWORD = process.env.BUGZILLA_PASSWORD;
 
 // Permission security system
 const ALLOW_READ = process.env.BUGZILLA_ALLOW_READ !== 'false';
@@ -37,8 +36,6 @@ if (!BUGZILLA_URL) {
 const client = new BugzillaClient({
   baseUrl: BUGZILLA_URL,
   apiKey: BUGZILLA_API_KEY,
-  login: BUGZILLA_LOGIN,
-  password: BUGZILLA_PASSWORD,
 });
 
 const server = new Server(

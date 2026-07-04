@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Anthropic Model Context Protocol (MCP) server for Bugzilla integration",
   "main": "build/index.js",
+  "bin": {
+    "mcp-bugzilla-server": "./build/index.js"
+  },
   "type": "module",
   "scripts": {
     "build": "tsc",
