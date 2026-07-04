@@ -13,6 +13,23 @@ const BUGZILLA_API_KEY = process.env.BUGZILLA_API_KEY;
 const BUGZILLA_LOGIN = process.env.BUGZILLA_LOGIN;
 const BUGZILLA_PASSWORD = process.env.BUGZILLA_PASSWORD;
 
+// Permission security system
+const ALLOW_READ = process.env.BUGZILLA_ALLOW_READ !== 'false';
+const ALLOW_WRITE = process.env.BUGZILLA_ALLOW_WRITE === 'true';
+const ALLOW_DELETE = process.env.BUGZILLA_ALLOW_DELETE === 'true';
+
+function checkPermission(type: 'read' | 'write' | 'delete'): void {
+  if (type === 'read' && !ALLOW_READ) {
+    throw new Error('Permission Denied: Read operations are disabled on this MCP server.');
+  }
+  if (type === 'write' && !ALLOW_WRITE) {
+    throw new Error('Permission Denied: Write operations are disabled on this MCP server.');
+  }
+  if (type === 'delete' && !ALLOW_DELETE) {
+    throw new Error('Permission Denied: Delete operations are disabled on this MCP server.');
+  }
+}
+
 if (!BUGZILLA_URL) {
   console.error('Warning: BUGZILLA_URL environment variable is not defined.');
 }
@@ -232,6 +249,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     switch (name) {
       case 'search_bugs': {
+        checkPermission('read');
         const params = SearchBugsSchema.parse(args);
         const bugs = await client.searchBugs(params);
         return {
@@ -245,6 +263,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'get_bug': {
+        checkPermission('read');
         const { id, include_history, include_attachments } = GetBugSchema.parse(args);
         const result = await client.getBug(id, include_history, include_attachments);
         return {
@@ -258,6 +277,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'create_bug': {
+        checkPermission('write');
         const bugData = CreateBugSchema.parse(args);
         const result = await client.createBug(bugData);
         return {
@@ -271,6 +291,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'update_bug': {
+        checkPermission('write');
         const { id, ...updates } = UpdateBugSchema.parse(args);
         const result = await client.updateBug(id, updates);
         return {
@@ -284,6 +305,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'get_comments': {
+        checkPermission('read');
         const { id } = GetCommentsSchema.parse(args);
         const comments = await client.getComments(id);
         return {
@@ -297,6 +319,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'add_comment': {
+        checkPermission('write');
         const { id, comment, is_private } = AddCommentSchema.parse(args);
         const result = await client.addComment(id, comment, is_private);
         return {
@@ -310,6 +333,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'add_attachment': {
+        checkPermission('write');
         const { id, data, file_name, summary, content_type } = AddAttachmentSchema.parse(args);
         const result = await client.addAttachment(id, { data, file_name, summary, content_type });
         return {
@@ -323,6 +347,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'get_products': {
+        checkPermission('read');
         const products = await client.getProducts();
         return {
           content: [
@@ -335,6 +360,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'get_fields': {
+        checkPermission('read');
         const fields = await client.getFields();
         return {
           content: [

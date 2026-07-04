@@ -34,6 +34,11 @@ BUGZILLA_API_KEY=your_bugzilla_api_key
 # 2. Traditional Authentication (Alternative)
 # BUGZILLA_LOGIN=your-email@example.com
 # BUGZILLA_PASSWORD=your-password
+
+# 3. Permissions (Optional Security Controls)
+# BUGZILLA_ALLOW_READ=true      # Default is true
+# BUGZILLA_ALLOW_WRITE=false     # Default is false (set to true to enable creating/updating bugs and comments)
+# BUGZILLA_ALLOW_DELETE=false    # Default is false
 ```
 *Note: If no authentication keys are provided, the server will fall back to anonymous/public access (suitable for public instances like Bugzilla Mozilla).*
 
