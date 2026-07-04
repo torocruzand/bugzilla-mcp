@@ -105,6 +105,10 @@ export interface BugField {
 
 export class BugzillaClient {
   private client: AxiosInstance;
+  private apiKey?: string;
+  private login?: string;
+  private password?: string;
+  private token?: string;
 
   constructor(config: BugzillaConfig) {
     if (!config.baseUrl) {
@@ -118,18 +122,18 @@ export class BugzillaClient {
 
     // 1. API Key Auth
     if (config.apiKey) {
+      headers['X-BUGZILLA-API-KEY'] = config.apiKey;
       headers['Bugzilla-API-Key'] = config.apiKey;
-    } 
-    // 2. Login/Password Auth
-    else if (config.login && config.password) {
-      headers['X-Bugzilla-Login'] = config.login;
-      headers['X-Bugzilla-Password'] = config.password;
     }
 
     this.client = axios.create({
       baseURL: config.baseUrl.replace(/\/$/, ''),
       headers,
     });
+
+    this.apiKey = config.apiKey;
+    this.login = config.login;
+    this.password = config.password;
   }
 
   private handleError(error: unknown, context: string): never {
@@ -148,8 +152,37 @@ export class BugzillaClient {
     throw new Error(`Unexpected error during ${context}: ${(error as Error).message}`);
   }
 
+  private async ensureAuthenticated(): Promise<void> {
+    if (this.token || this.apiKey) {
+      return;
+    }
+
+    if (this.login && this.password) {
+      try {
+        const response = await this.client.get('/rest/login', {
+          params: {
+            login: this.login,
+            password: this.password,
+          },
+        });
+
+        if (response.data && response.data.token) {
+          this.token = response.data.token;
+          // Set the token header on the HTTP client so all future requests carry it automatically
+          this.client.defaults.headers.common['X-BUGZILLA-TOKEN'] = this.token;
+        } else {
+          throw new Error('No login token was returned by Bugzilla.');
+        }
+      } catch (error) {
+        this.handleError(error, 'authenticating session');
+      }
+    }
+  }
+
   async searchBugs(params: BugSearchParameters): Promise<Bug[]> {
     try {
+      await this.ensureAuthenticated();
+      
       // Map params and filter undefined
       const queryParams: Record<string, string> = {};
       
@@ -171,6 +204,8 @@ export class BugzillaClient {
 
   async getBug(id: number, includeHistory = false, includeAttachments = false): Promise<{ bug: Bug; history?: BugHistory['bugs'][0]['history']; attachments?: Attachment[] }> {
     try {
+      await this.ensureAuthenticated();
+      
       const response = await this.client.get(`/rest/bug/${id}`);
       const bug = response.data.bugs?.[0];
       if (!bug) {
@@ -220,6 +255,7 @@ export class BugzillaClient {
     assigned_to?: string;
   }): Promise<{ id: number }> {
     try {
+      await this.ensureAuthenticated();
       const response = await this.client.post('/rest/bug', bugData);
       return { id: response.data.id };
     } catch (error) {
@@ -237,6 +273,7 @@ export class BugzillaClient {
     [key: string]: any;
   }): Promise<{ id: number; changes: any }> {
     try {
+      await this.ensureAuthenticated();
       const response = await this.client.put(`/rest/bug/${id}`, updates);
       return { 
         id, 
@@ -249,6 +286,7 @@ export class BugzillaClient {
 
   async getComments(bugId: number): Promise<Comment[]> {
     try {
+      await this.ensureAuthenticated();
       const response = await this.client.get(`/rest/bug/${bugId}/comment`);
       // Response shape: { bugs: { "bug_id": { comments: [...] } } }
       const bugData = response.data.bugs?.[bugId];
@@ -260,6 +298,7 @@ export class BugzillaClient {
 
   async addComment(bugId: number, comment: string, isPrivate = false): Promise<{ id: number }> {
     try {
+      await this.ensureAuthenticated();
       const response = await this.client.post(`/rest/bug/${bugId}/comment`, {
         comment,
         is_private: isPrivate,
@@ -277,6 +316,7 @@ export class BugzillaClient {
     content_type: string;
   }): Promise<{ id: number }> {
     try {
+      await this.ensureAuthenticated();
       const response = await this.client.post(`/rest/bug/${bugId}/attachment`, {
         ids: [bugId],
         data: attachmentData.data,
@@ -292,6 +332,7 @@ export class BugzillaClient {
 
   async getProducts(): Promise<Product[]> {
     try {
+      await this.ensureAuthenticated();
       // In Bugzilla, you can get all products or accessible products
       const response = await this.client.get('/rest/product?type=accessible');
       return response.data.products || [];
@@ -302,6 +343,7 @@ export class BugzillaClient {
 
   async getFields(): Promise<BugField[]> {
     try {
+      await this.ensureAuthenticated();
       const response = await this.client.get('/rest/field/bug');
       return response.data.fields || [];
     } catch (error) {
