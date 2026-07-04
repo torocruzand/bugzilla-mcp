@@ -120,16 +120,16 @@ export class BugzillaClient {
       'Accept': 'application/json',
     };
 
-    // 1. API Key Auth
-    if (config.apiKey) {
-      headers['X-BUGZILLA-API-KEY'] = config.apiKey;
-      headers['Bugzilla-API-Key'] = config.apiKey;
-    }
-
-    this.client = axios.create({
+    const axiosConfig: any = {
       baseURL: config.baseUrl.replace(/\/$/, ''),
       headers,
-    });
+    };
+
+    if (config.apiKey) {
+      axiosConfig.params = { api_key: config.apiKey };
+    }
+
+    this.client = axios.create(axiosConfig);
 
     this.apiKey = config.apiKey;
     this.login = config.login;
