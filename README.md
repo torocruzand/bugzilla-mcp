@@ -129,20 +129,17 @@ Point your client configuration to the built file:
 
 The server registers and exposes the following tools:
 
-### A. Bug Management
-- `search_bugs`: Query bugs with filters (summary, status, assigned_to, product, component, severity, priority, creation_time).
-- `get_bug`: Fetch detailed information on a specific bug by ID. Can optionally include `include_history` and `include_attachments`.
-- `create_bug`: Create a new bug entry. Required properties: `product`, `component`, `summary`, `version`, `description`.
-- `update_bug`: Update fields of an existing bug (e.g., status, resolution, priority, assigned_to).
-
-### B. Comments & Attachments
-- `get_comments`: Fetch all comments associated with a specific bug ID.
-- `add_comment`: Append a new comment to a bug. Supports marking comments private (`is_private`).
-- `add_attachment`: Upload a Base64-encoded attachment with name, summary, and content type.
-
-### C. Metadata
-- `get_products`: List all products and components. Helpful for determining valid fields when creating bugs.
-- `get_fields`: Fetch active fields, allowed statuses, and resolution values for the instance.
+| Tool | Area | Auth | Description |
+| :--- | :--- | :--- | :--- |
+| `search_bugs` | Bug Management | API Key / Public | Advanced search using parameters: summary, status, assigned_to, product, component, severity, priority, creation_time. |
+| `get_bug` | Bug Management | API Key / Public | Retrieve details of a specific bug by ID. Can optionally include `include_history` and `include_attachments`. |
+| `create_bug` | Bug Management | API Key | Create a new bug. Requires: product, component, summary, version, and description. |
+| `update_bug` | Bug Management | API Key | Modify fields of an existing bug (e.g., status, resolution, assigned_to, priority, severity, summary). |
+| `get_comments` | Comments & Attachments | API Key / Public | Retrieve all comments for a specific bug by ID. |
+| `add_comment` | Comments & Attachments | API Key | Add a text comment to a bug. Supports optional private comments (`is_private`). |
+| `add_attachment` | Comments & Attachments | API Key | Upload a file attachment as a Base64 string with file_name, summary, and content_type. |
+| `get_products` | Metadata | API Key / Public | Retrieve the list of products and components available in the Bugzilla instance. |
+| `get_fields` | Metadata | API Key / Public | Retrieve active fields, allowed statuses, and resolution values for the instance. |
 
 ---
 
