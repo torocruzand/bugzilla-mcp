@@ -81,6 +81,29 @@ Add this to your `claude_desktop_config.json` configuration file (typically `~/L
 }
 ```
 
+#### 3. Configuration for Claude Code (CLI)
+Claude Code manages its MCP server links in user-level configuration settings. You can configure the server by adding the block to your global settings file (typically `~/.claude.json` or `~/.claude/mcp_settings.json`):
+
+```json
+{
+  "mcpServers": {
+    "bugzilla": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "github:torocruzand/mcp_bugzilla"
+      ],
+      "env": {
+        "BUGZILLA_URL": "https://bugzilla.your-instance.com",
+        "BUGZILLA_API_KEY": "your_bugzilla_api_key",
+        "BUGZILLA_ALLOW_READ": "true",
+        "BUGZILLA_ALLOW_WRITE": "false"
+      }
+    }
+  }
+}
+```
+
 ---
 
 ### Method B: Manual Setup (Build from Source)

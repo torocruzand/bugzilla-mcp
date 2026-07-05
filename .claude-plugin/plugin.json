@@ -6,5 +6,6 @@
     "name": "torocruzand"
   },
   "homepage": "https://github.com/torocruzand/bugzilla-mcp",
-  "repository": "https://github.com/torocruzand/bugzilla-mcp"
+  "repository": "https://github.com/torocruzand/bugzilla-mcp",
+  "icon": "./logo.svg"
 }
