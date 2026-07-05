@@ -1,0 +1,15 @@
+{
+  "name": "mcp-bugzilla",
+  "owner": {
+    "name": "torocruzand"
+  },
+  "plugins": [
+    {
+      "name": "mcp-bugzilla",
+      "source": "./",
+      "description": "Bugzilla Model Context Protocol (MCP) server for Claude Code and AI agents",
+      "version": "1.2.0",
+      "keywords": ["bugzilla", "mcp", "developer-tools"]
+    }
+  ]
+}
