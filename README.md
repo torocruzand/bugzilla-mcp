@@ -104,6 +104,17 @@ Claude Code manages its MCP server links in user-level configuration settings. Y
 }
 ```
 
+#### 4. Configuration for Codex (GUI)
+To register this MCP server as a plugin in the Codex app via the graphical user interface:
+1. Open the **Plugins** section in the Codex sidebar.
+2. Click **Add** > **Add plugin marketplace**.
+3. Fill in the modal fields as follows:
+   - **Source:** `torocruzand/bugzilla-mcp` (or the full GitHub URL)
+   - **Git ref:** `develop` *(IMPORTANT: Set this to `develop` since the repository codebase and manifests reside on the develop branch)*
+   - **Sparse paths:** Leave this completely blank (or enter `./`) since the manifest files are at the root of the repository.
+4. Click **Add marketplace**, locate the plugin, and click **Install**.
+5. Restart the Codex app to apply your changes.
+
 ---
 
 ### Method B: Manual Setup (Build from Source)
