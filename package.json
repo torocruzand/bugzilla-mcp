@@ -10,7 +10,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "start": "node build/index.js"
+    "start": "node build/index.js",
+    "prepare": "npm run build"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.6.0",
