@@ -1,5 +1,9 @@
 # Bugzilla Model Context Protocol (MCP) Server
 
+<p align="center">
+  <img src="logo.jpg" alt="Bugzilla MCP Logo" width="200" height="200" />
+</p>
+
 A production-ready Model Context Protocol (MCP) server for integrating Bugzilla with AI agents and LLMs. It enables agents to search, view, create, and update bugs, manage comments, upload attachments, and query metadata directly from a Bugzilla instance.
 
 ## Features
