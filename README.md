@@ -106,6 +106,7 @@ Claude Code manages its MCP server links in user-level configuration settings. Y
 
 #### 4. Configuration for Codex (GUI)
 To register this MCP server as a plugin in the Codex app via the graphical user interface:
+
 1. Open the **Plugins** section in the Codex sidebar.
 2. Click **Add** > **Add plugin marketplace**.
 3. Fill in the modal fields as follows:
@@ -114,6 +115,33 @@ To register this MCP server as a plugin in the Codex app via the graphical user 
    - **Sparse paths:** Leave this completely blank (or enter `./`) since the manifest files are at the root of the repository.
 4. Click **Add marketplace**, locate the plugin, and click **Install**.
 5. Restart the Codex app to apply your changes.
+
+##### Configuring Parameters & API Credentials in Codex
+Because the Codex UI does not display custom input fields for plugin environment variables on the installation screen, you must supply your parameters through one of the following methods:
+
+* **Option A: Workspace `.env` File (Recommended)**
+  Create a `.env` file in the root of the workspace/project directory you are currently working on in Codex:
+  ```env
+  BUGZILLA_URL=https://bugzilla.your-instance.com
+  BUGZILLA_API_KEY=your_bugzilla_api_key
+  BUGZILLA_ALLOW_READ=true
+  BUGZILLA_ALLOW_WRITE=false
+  ```
+  Codex will automatically inject these variables into the plugin process when launched.
+
+* **Option B: Shell Environment Variables**
+  Export the credentials in your terminal before launching the Codex application:
+  ```bash
+  export BUGZILLA_URL="https://bugzilla.your-instance.com"
+  export BUGZILLA_API_KEY="your_bugzilla_api_key"
+  export BUGZILLA_ALLOW_READ="true"
+  export BUGZILLA_ALLOW_WRITE="false"
+  # Now start Codex
+  codex
+  ```
+
+* **Option C: Global Codex Settings File**
+  Add the environment variables under the environment/mcp configuration object in your user-level configuration settings file (typically `~/.codex/config.toml` or `~/.claude/settings.json`).
 
 ---
 
